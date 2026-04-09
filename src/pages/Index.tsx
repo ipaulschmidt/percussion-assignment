@@ -4,32 +4,7 @@ import SearchInput from "@/components/SearchInput";
 import ExampleQueries from "@/components/ExampleQueries";
 import ResultsDisplay from "@/components/ResultsDisplay";
 import { useToast } from "@/hooks/use-toast";
-
-const SYSTEM_PROMPT = `You are a professional orchestral percussion consultant. Your task is to determine the optimal number of percussionists required for a given musical work and provide a detailed, practical assignment of instruments.
-
-For every response, follow this structure:
-
-## 🎯 Piece Identification
-Restate the piece, composer, and any relevant context.
-
-## 🥁 Number of Percussionists
-- **Minimum**: fewest players with some doubling
-- **Ideal**: enough for no critical overlaps
-
-## 🎼 Full Instrument List
-Complete list with exact types, quantities. Be specific (e.g., "5-octave marimba", "Germanic crash cymbals", "5 timpani").
-
-## 👥 Percussionist Assignments
-Assign from most to least challenging. Label as Percussionist 1, 2, 3, etc. Group by setup proximity and technique similarity. Ensure all transitions are physically possible.
-
-## 🧠 Relevant Notes
-- **Complexity Level** per part: Beginner / Intermediate / Advanced
-- **Technical Skills Required**: 4-mallet proficiency, fast switching, rhythmic precision, extended techniques, etc.
-
-## 💡 Additional Tips
-Setup advice, transition tips, common professional practices.
-
-Rules: Never guess instrumentation. Prioritize realism and playability. Be specific and structured. Think like a performer setting up the stage.`;
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -50,31 +25,69 @@ const Index = () => {
     setResult(null);
 
     try {
-      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer placeholder`,
-        },
-        body: JSON.stringify({
-          model: "google/gemini-2.0-flash-001",
-          messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            { role: "user", content: `Determine the percussion setup and assignments for: ${query}` },
-          ],
-        }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-percussion`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ query }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Failed to get response");
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error || "Failed to analyze");
       }
 
-      const data = await response.json();
-      setResult(data.choices?.[0]?.message?.content || "No result returned.");
-    } catch (err) {
+      // Stream SSE response
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error("No response body");
+
+      const decoder = new TextDecoder();
+      let fullText = "";
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex: number;
+        while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
+          let line = buffer.slice(0, newlineIndex);
+          buffer = buffer.slice(newlineIndex + 1);
+
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") break;
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              fullText += content;
+              setResult(fullText);
+            }
+          } catch {
+            buffer = line + "\n" + buffer;
+            break;
+          }
+        }
+      }
+
+      if (!fullText) {
+        setResult("No results returned. Please try a different piece.");
+      }
+    } catch (err: any) {
       toast({
         title: "Error",
-        description: "Could not analyze the piece. Please try again.",
+        description: err.message || "Could not analyze the piece. Please try again.",
         variant: "destructive",
       });
       console.error(err);
@@ -109,7 +122,7 @@ const Index = () => {
           <ExampleQueries onSelect={handleSearch} disabled={isLoading} />
         )}
 
-        {isLoading && (
+        {isLoading && !result && (
           <div className="flex flex-col items-center gap-3 py-12">
             <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
             <p className="text-sm text-muted-foreground font-body animate-pulse-gold">
