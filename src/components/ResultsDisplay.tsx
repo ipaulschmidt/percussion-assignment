@@ -77,9 +77,19 @@ const ResultsDisplay = ({ content, pieceName }: ResultsDisplayProps) => {
             li: ({ children }) => (
               <li className="leading-[1.7] pl-1">{children}</li>
             ),
-            strong: ({ children }) => (
-              <strong className="font-semibold text-foreground">{children}</strong>
-            ),
+            strong: ({ children }) => {
+              const text = typeof children === "string" ? children : String(children);
+              if (text === "HIGH RISK") {
+                return <span className="inline-flex items-center rounded-md bg-red-500/15 px-2 py-0.5 text-xs font-bold text-red-400 ring-1 ring-inset ring-red-500/30">🔴 HIGH RISK</span>;
+              }
+              if (text === "MEDIUM RISK") {
+                return <span className="inline-flex items-center rounded-md bg-yellow-500/15 px-2 py-0.5 text-xs font-bold text-yellow-400 ring-1 ring-inset ring-yellow-500/30">🟡 MEDIUM RISK</span>;
+              }
+              if (text === "LOW RISK") {
+                return <span className="inline-flex items-center rounded-md bg-green-500/15 px-2 py-0.5 text-xs font-bold text-green-400 ring-1 ring-inset ring-green-500/30">🟢 LOW RISK</span>;
+              }
+              return <strong className="font-semibold text-foreground">{children}</strong>;
+            },
           }}
         >
           {content}
