@@ -27,12 +27,17 @@ Restate the piece, composer, and any relevant context.
 Complete list with exact types, quantities. Be specific (e.g., "5-octave marimba", "Germanic crash cymbals", "5 timpani"). Use a bulleted list.
 
 ## Percussionist Assignments
-Assign from most to least challenging. Label as **Percussionist 1**, **Percussionist 2**, etc. For each player, list their role and assigned instruments as bullet points. Group by setup proximity and technique similarity. Ensure all transitions are physically possible.
+Assign from most to least challenging. Label as **Percussionist 1**, **Percussionist 2**, etc. For each player:
+1. State their primary role
+2. List assigned instruments as bullet points
+3. End with a bullet: "- **Difficulty:** **HIGH**" or "- **Difficulty:** **MEDIUM**" or "- **Difficulty:** **LOW**"
 
-After listing each percussionist's instruments, tag the overall difficulty of that part using exactly one of these labels on its own line:
-- **HIGH** — virtuosic, exposed solos, complex switching, timing-critical
-- **MEDIUM** — moderate coordination, endurance, or precision required
-- **LOW** — straightforward, supportive, minimal switching
+Difficulty definitions:
+- HIGH = virtuosic, exposed solos, complex switching, timing-critical
+- MEDIUM = moderate coordination, endurance, or precision required
+- LOW = straightforward, supportive, minimal switching
+
+Group by setup proximity and technique similarity. Ensure all transitions are physically possible.
 
 ## Relevant Notes
 
