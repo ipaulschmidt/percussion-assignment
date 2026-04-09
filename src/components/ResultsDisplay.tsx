@@ -1,5 +1,5 @@
 import ReactMarkdown from "react-markdown";
-import { Music, Users, ListMusic, UserCheck, Brain, Lightbulb } from "lucide-react";
+import { Music, Users, ListMusic, UserCheck, Brain, Lightbulb, ShieldAlert } from "lucide-react";
 
 interface ResultsDisplayProps {
   content: string;
@@ -11,6 +11,7 @@ const sectionIcons: Record<string, React.ReactNode> = {
   "number": <Users className="h-4 w-4 text-primary shrink-0" />,
   "instrument": <ListMusic className="h-4 w-4 text-primary shrink-0" />,
   "assignment": <UserCheck className="h-4 w-4 text-primary shrink-0" />,
+  "risk": <ShieldAlert className="h-4 w-4 text-primary shrink-0" />,
   "note": <Brain className="h-4 w-4 text-primary shrink-0" />,
   "tip": <Lightbulb className="h-4 w-4 text-primary shrink-0" />,
 };
@@ -21,6 +22,7 @@ function getIconForHeading(text: string) {
   if (lower.includes("number") || lower.includes("percussionist")) return sectionIcons.number;
   if (lower.includes("instrument") || lower.includes("list")) return sectionIcons.instrument;
   if (lower.includes("assignment")) return sectionIcons.assignment;
+  if (lower.includes("risk")) return sectionIcons.risk;
   if (lower.includes("note") || lower.includes("relevant") || lower.includes("complex")) return sectionIcons.note;
   if (lower.includes("tip") || lower.includes("additional")) return sectionIcons.tip;
   return <Music className="h-4 w-4 text-primary shrink-0" />;
