@@ -29,18 +29,10 @@ Complete list with exact types, quantities. Be specific (e.g., "5-octave marimba
 ## Percussionist Assignments
 Assign from most to least challenging. Label as **Percussionist 1**, **Percussionist 2**, etc. For each player, list their role and assigned instruments as bullet points. Group by setup proximity and technique similarity. Ensure all transitions are physically possible.
 
-## Risk Assessment
-For each percussionist assignment, tag the overall part risk level using exactly these labels:
-- **HIGH RISK** — exposed solos, timing-critical entries, high-visibility moments
-- **MEDIUM RISK** — coordination-heavy, endurance-demanding, or color-sensitive passages
-- **LOW RISK** — supportive roles, doubling, or straightforward parts
-
-Also tag individual instruments within each assignment when relevant, e.g.:
-- Snare Drum — **HIGH RISK** (solo exposure in mvt. 2)
-- Triangle — **MEDIUM RISK** (color + precise timing)
-- Bass Drum — **LOW RISK** (doubling with timpani)
-
-This helps assign the strongest players to the most critical parts.
+After listing each percussionist's instruments, tag the overall difficulty of that part using exactly one of these labels on its own line:
+- **HIGH** — virtuosic, exposed solos, complex switching, timing-critical
+- **MEDIUM** — moderate coordination, endurance, or precision required
+- **LOW** — straightforward, supportive, minimal switching
 
 ## Relevant Notes
 
