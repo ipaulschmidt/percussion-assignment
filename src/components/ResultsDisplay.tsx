@@ -1,5 +1,5 @@
 import ReactMarkdown from "react-markdown";
-import { Music, Users, ListMusic, UserCheck, Brain, Lightbulb, ShieldAlert } from "lucide-react";
+import { Music, Users, ListMusic, UserCheck, Brain, Lightbulb } from "lucide-react";
 
 interface ResultsDisplayProps {
   content: string;
@@ -11,7 +11,7 @@ const sectionIcons: Record<string, React.ReactNode> = {
   "number": <Users className="h-4 w-4 text-primary shrink-0" />,
   "instrument": <ListMusic className="h-4 w-4 text-primary shrink-0" />,
   "assignment": <UserCheck className="h-4 w-4 text-primary shrink-0" />,
-  "risk": <ShieldAlert className="h-4 w-4 text-primary shrink-0" />,
+  
   "note": <Brain className="h-4 w-4 text-primary shrink-0" />,
   "tip": <Lightbulb className="h-4 w-4 text-primary shrink-0" />,
 };
@@ -22,7 +22,7 @@ function getIconForHeading(text: string) {
   if (lower.includes("number") || lower.includes("percussionist")) return sectionIcons.number;
   if (lower.includes("instrument") || lower.includes("list")) return sectionIcons.instrument;
   if (lower.includes("assignment")) return sectionIcons.assignment;
-  if (lower.includes("risk")) return sectionIcons.risk;
+  
   if (lower.includes("note") || lower.includes("relevant") || lower.includes("complex")) return sectionIcons.note;
   if (lower.includes("tip") || lower.includes("additional")) return sectionIcons.tip;
   return <Music className="h-4 w-4 text-primary shrink-0" />;
@@ -79,14 +79,14 @@ const ResultsDisplay = ({ content, pieceName }: ResultsDisplayProps) => {
             ),
             strong: ({ children }) => {
               const text = typeof children === "string" ? children : String(children);
-              if (text === "HIGH RISK") {
-                return <span className="inline-flex items-center rounded-md bg-red-500/15 px-2 py-0.5 text-xs font-bold text-red-400 ring-1 ring-inset ring-red-500/30">🔴 HIGH RISK</span>;
+              if (text === "HIGH") {
+                return <span className="inline-flex items-center rounded-md bg-red-500/15 px-2 py-0.5 text-xs font-bold text-red-400 ring-1 ring-inset ring-red-500/30">HIGH</span>;
               }
-              if (text === "MEDIUM RISK") {
-                return <span className="inline-flex items-center rounded-md bg-yellow-500/15 px-2 py-0.5 text-xs font-bold text-yellow-400 ring-1 ring-inset ring-yellow-500/30">🟡 MEDIUM RISK</span>;
+              if (text === "MEDIUM") {
+                return <span className="inline-flex items-center rounded-md bg-yellow-500/15 px-2 py-0.5 text-xs font-bold text-yellow-400 ring-1 ring-inset ring-yellow-500/30">MEDIUM</span>;
               }
-              if (text === "LOW RISK") {
-                return <span className="inline-flex items-center rounded-md bg-green-500/15 px-2 py-0.5 text-xs font-bold text-green-400 ring-1 ring-inset ring-green-500/30">🟢 LOW RISK</span>;
+              if (text === "LOW") {
+                return <span className="inline-flex items-center rounded-md bg-green-500/15 px-2 py-0.5 text-xs font-bold text-green-400 ring-1 ring-inset ring-green-500/30">LOW</span>;
               }
               return <strong className="font-semibold text-foreground">{children}</strong>;
             },
