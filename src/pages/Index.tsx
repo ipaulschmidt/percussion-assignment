@@ -131,7 +131,10 @@ const Index = () => {
 
         {/* Examples or Loading */}
         {!result && !isLoading && (
-          <ExampleQueries onSelect={handleSearch} disabled={isLoading} />
+          <ExampleQueries
+            onSelect={(q) => handleSearch({ kind: "text", query: q })}
+            disabled={isLoading}
+          />
         )}
 
         {isLoading && !result && (
