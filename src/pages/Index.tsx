@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Drum } from "lucide-react";
-import SearchInput from "@/components/SearchInput";
+import SearchInput, { type SearchPayload } from "@/components/SearchInput";
 import ExampleQueries from "@/components/ExampleQueries";
 import ResultsDisplay from "@/components/ResultsDisplay";
 import { useToast } from "@/hooks/use-toast";
