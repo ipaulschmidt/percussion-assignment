@@ -39,7 +39,13 @@ const Index = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ query }),
+          body: JSON.stringify(
+            payload.kind === "text"
+              ? { query: payload.query }
+              : payload.kind === "url"
+                ? { url: payload.url }
+                : { image: payload.image }
+          ),
         }
       );
 
