@@ -19,9 +19,15 @@ const Index = () => {
     }
   }, [result]);
 
-  const handleSearch = async (query: string) => {
+  const handleSearch = async (payload: SearchPayload) => {
     setIsLoading(true);
-    setPieceName(query);
+    setPieceName(
+      payload.kind === "text"
+        ? payload.query
+        : payload.kind === "url"
+          ? payload.url
+          : payload.fileName || "Concert program photo"
+    );
     setResult(null);
 
     try {
