@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Drum } from "lucide-react";
-import SearchInput from "@/components/SearchInput";
+import SearchInput, { type SearchPayload } from "@/components/SearchInput";
 import ExampleQueries from "@/components/ExampleQueries";
 import ResultsDisplay from "@/components/ResultsDisplay";
 import { useToast } from "@/hooks/use-toast";
@@ -19,9 +19,15 @@ const Index = () => {
     }
   }, [result]);
 
-  const handleSearch = async (query: string) => {
+  const handleSearch = async (payload: SearchPayload) => {
     setIsLoading(true);
-    setPieceName(query);
+    setPieceName(
+      payload.kind === "text"
+        ? payload.query
+        : payload.kind === "url"
+          ? payload.url
+          : payload.fileName || "Concert program photo"
+    );
     setResult(null);
 
     try {
@@ -33,7 +39,13 @@ const Index = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ query }),
+          body: JSON.stringify(
+            payload.kind === "text"
+              ? { query: payload.query }
+              : payload.kind === "url"
+                ? { url: payload.url }
+                : { image: payload.image }
+          ),
         }
       );
 
@@ -119,7 +131,10 @@ const Index = () => {
 
         {/* Examples or Loading */}
         {!result && !isLoading && (
-          <ExampleQueries onSelect={handleSearch} disabled={isLoading} />
+          <ExampleQueries
+            onSelect={(q) => handleSearch({ kind: "text", query: q })}
+            disabled={isLoading}
+          />
         )}
 
         {isLoading && !result && (
