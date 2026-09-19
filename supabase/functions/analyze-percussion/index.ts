@@ -129,7 +129,7 @@ serve(async (req) => {
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: `Determine the percussion setup and assignments for: ${query}` },
+          { role: "user", content: userContent },
         ],
         stream: true,
       }),
