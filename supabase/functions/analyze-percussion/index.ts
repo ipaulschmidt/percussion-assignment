@@ -82,13 +82,37 @@ serve(async (req) => {
   }
 
   try {
-    const { query } = await req.json();
-    if (!query || typeof query !== "string") {
-      return new Response(JSON.stringify({ error: "Missing query" }), {
+    const { query, url, image } = await req.json();
+
+    let userContent: unknown;
+    if (typeof image === "string" && image.startsWith("data:image/")) {
+      userContent = [
+        {
+          type: "text",
+          text: "This image shows a concert program or list of pieces. Identify every work and composer shown, then determine the percussion setup and assignments for the entire concert.",
+        },
+        { type: "image_url", image_url: { url: image } },
+      ];
+    } else if (typeof url === "string" && /^https?:\/\//i.test(url)) {
+      let pageText: string;
+      try {
+        pageText = await fetchPageText(url);
+      } catch (e) {
+        return new Response(
+          JSON.stringify({ error: e instanceof Error ? e.message : "Could not read that page." }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+      userContent = `The text below was taken from a concert page (${url}). Identify every work and composer on the program, then determine the percussion setup and assignments for the entire concert.\n\n---\n${pageText}`;
+    } else if (typeof query === "string" && query.trim()) {
+      userContent = `Determine the percussion setup and assignments for: ${query}`;
+    } else {
+      return new Response(JSON.stringify({ error: "Add a piece name, an image, or a link." }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
