@@ -48,7 +48,33 @@ Group by setup proximity and technique similarity. Ensure all transitions are ph
 ## Additional Tips
 Setup advice, transition tips, common professional practices. Use bullet points.
 
-Rules: Never guess instrumentation. Prioritize realism and playability. Be specific and structured. Think like a performer setting up the stage.`;
+Rules: Never guess instrumentation. Prioritize realism and playability. Be specific and structured. Think like a performer setting up the stage.
+
+If the input contains MULTIPLE works (a full concert program, from text, an image of a program, or a web page):
+- Start with a "## Concert Program" section listing every identified work and composer, in order.
+- Then repeat the structure above for EACH work, under a heading with the work's title.
+- Finish with a "## Whole-Concert Summary" section: total percussionists needed across the program, the combined master instrument list (no duplicates), shared-instrument and setup/changeover considerations between pieces, and the overall difficulty per player.
+If a work in the image or page is unreadable or ambiguous, say so instead of guessing.`;
+
+async function fetchPageText(url: string): Promise<string> {
+  const res = await fetch(url, {
+    headers: { "User-Agent": "Mozilla/5.0 (compatible; PercussionAssignmentPro/1.0)" },
+  });
+  if (!res.ok) throw new Error(`Could not load that page (status ${res.status}).`);
+  const html = await res.text();
+  const text = html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&#39;|&rsquo;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!text) throw new Error("That page had no readable text.");
+  return text.slice(0, 24000);
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
